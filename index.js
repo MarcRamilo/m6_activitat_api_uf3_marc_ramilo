@@ -219,56 +219,101 @@ function mostrarPersonatgesFiltrats(personatges) {
     `;
     container.appendChild(div);
   });
-
 }
 
 // Obtenir la llista de personatges del servidor
 function cargarPersonajesEnSelector() {
   const select = document.getElementById("selectPersonatgeModificar");
   select.innerHTML = ""; // Netejar el selector abans de poblar-lo
-  
+
   // Obtenir la llista de personatges del servidor
   getCharacters()
-      .then(response => {
-          response.forEach(character => {
-              const option = document.createElement("option");
-              option.value = character.id;
-              option.textContent = character.name;
-              select.appendChild(option);
-          });
-      })
-      .catch(error => console.error("Error obteniendo personajes:", error));
+    .then((response) => {
+      response.forEach((character) => {
+        const option = document.createElement("option");
+        option.value = character.id;
+        option.textContent = character.name;
+        select.appendChild(option);
+      });
+    })
+    .catch((error) => console.error("Error obteniendo personajes:", error));
 }
 
 // Carregar la llista de personatges en el selector al carregar la pàgina
 document.addEventListener("DOMContentLoaded", cargarPersonajesEnSelector);
 
 // En el esdeveniment de clicar el botó de modificar personatge
-document.getElementById("modificarPersonatge").addEventListener("click", function () {
-  const nuevoNombre = document.getElementById("nouNom").value;
-  const personajeId = document.getElementById("selectPersonatgeModificar").value;
+document
+  .getElementById("modificarPersonatge")
+  .addEventListener("click", function () {
+    const nuevoNombre = document.getElementById("nouNom").value;
+    const personajeId = document.getElementById(
+      "selectPersonatgeModificar"
+    ).value;
 
-  // Enviar una solicitud al servidor per actualizar el nom
-  fetch(`http://localhost:3001/characters/${personajeId}`, {
-      method: 'PATCH', // Método PATCH para actualizar el nom del personatge
+    // Enviar una solicitud al servidor per actualizar el nom
+    fetch(`http://localhost:3001/characters/${personajeId}`, {
+      method: "PATCH", // Método PATCH para actualizar el nom del personatge
       headers: {
-          'Content-Type': 'application/json'
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-          name: nuevoNombre
-      })
-  })
-  .then(response => {
-      if (response.ok) {
+        name: nuevoNombre,
+      }),
+    })
+      .then((response) => {
+        if (response.ok) {
           console.log("Nombre del personaje actualizado correctamente.");
           // Recargar la llista de personajes en el selector
           cargarPersonajesEnSelector();
-      } else {
+        } else {
           throw new Error("Error al actualizar el nombre del personaje.");
-      }
-  })
-  .catch(error => console.error("Error modificando personaje:", error));
+        }
+      })
+      .catch((error) => console.error("Error modificando personaje:", error));
 
-  // Netegar el camp de text
-  document.getElementById("nouNom").value = "";
+    // Netegar el camp de text
+    document.getElementById("nouNom").value = "";
+  });
+
+  
+  document.getElementById("guardarNouPersonatge").addEventListener("click", function () {
+    const newName = document.getElementById("nouNomPers").value;
+    console.log("nuevoNombre:", newName );
+    const newProfile = document.getElementById("nouImagen").value;
+  
+    if (newName !== "") {
+        const nuevoPersonaje = {
+            id: null,
+            name: newName,
+            description: "",
+            modified: new Date().toISOString(),
+            thumbnail: { path: newProfile, extension: 'jpg' },
+            comics: { available: 0, items: [] },
+            series: { available: 0, items: [] },
+            stories: { available: 0, items: [] },
+            events: { available: 0, items: [] },
+            urls: []
+        };
+
+        fetch("http://localhost:3001/characters", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(nuevoPersonaje)
+        })
+        .then(response => {
+            if (response.ok) {
+                console.log("Nuevo personaje creado correctamente.");
+                document.getElementById("nouNom").value = "";
+                document.getElementById("nouImagen").value = "";
+            } else {
+                throw new Error("Error al crear el nuevo personaje.");
+            }
+        })
+        .catch(error => console.error("Error creando nuevo personaje:", error));
+    } else {
+        console.error("El nombre del personaje no puede estar vacío.");
+    }
 });

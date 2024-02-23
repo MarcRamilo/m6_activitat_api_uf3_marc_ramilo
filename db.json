@@ -3669,6 +3669,33 @@
           "url": "http://marvel.com/comics/characters/1011136/air-walker_gabriel_lan?utm_campaign=apiRef&utm_source=7154218a9ed5368f2076f3c884a305fe"
         }
       ]
+    },
+    {
+      "id": 1017852,
+      "name": "pepe",
+      "description": "",
+      "modified": "2024-02-23T23:27:59.041Z",
+      "thumbnail": {
+        "path": "https://media.prospectmagazine.co.uk/prod/images/gm_preview/f60b0f018103-pepedankmeems420blazeitohbabyatripledankaestheticafkeepit100",
+        "extension": "jpg"
+      },
+      "comics": {
+        "available": 0,
+        "items": []
+      },
+      "series": {
+        "available": 0,
+        "items": []
+      },
+      "stories": {
+        "available": 0,
+        "items": []
+      },
+      "events": {
+        "available": 0,
+        "items": []
+      },
+      "urls": []
     }
   ]
 }

@@ -31,14 +31,6 @@
             <button id="eliminarPersonatge" class="btn btn-danger mx-2">Eliminar Personaje</button>
         </div>
         <br>
-        <button id="nouPersonatge" class="btn btn-success mx-2">Nou Personatge</button>
-        <div id="formulariNouPersonatge" style="display: none;">
-            <h2>Afegir nou personatge</h2>
-            <label for="nom">Nom:</label>
-            <input type="text" id="nom" name="nom" class="form-control mb-2">
-        
-            <button id="guardarNouPersonatge" class="btn btn-primary">Guardar</button>
-        </div>
 
         <div id="filtrePerNom">
             <h2>Filtrar per Nom</h2>
@@ -60,7 +52,15 @@
             <button id="modificarPersonatge" class="btn btn-primary">Modificar</button>
         </div>
         <button id="mostrarFormulariModificar" class="btn btn-warning mx-2">Modificar Personatge</button>
-    
+        <div id="formulariNouPersonatge">
+            <h2>Afegir Nou Personatge</h2>
+            <label for="nouNomPers">Nom:</label>
+            <input type="text" id="nouNomPers" name="nouNomPers" class="form-control mb-2">
+            <label for="nouImagen">URL de la Imagen:</label>
+            <input type="text" id="nouImagen" name="nouImagen" class="form-control mb-2">
+        
+            <button id="guardarNouPersonatge" class="btn btn-primary">Guardar</button>
+        </div>
     </div>
 
     </div>
