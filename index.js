@@ -86,47 +86,44 @@ document
       const response = await fetch(localApiUrl);
       const data = await response.json();
 
-      // Accedir al primer element de la resposta, que deberia ser un arreglo de personajes
-      const charactersArray = data[0]; //Accedir al primer element de la resposta, que hauria de ser un array de personatges
-
-      if (!Array.isArray(charactersArray)) {
-        console.error("La respuesta no es un arreglo:", charactersArray);
+      // Verificar si la respuesta es un arreglo de personajes
+      if (!Array.isArray(data)) {
+        console.error("La respuesta no es un arreglo:", data);
         return;
       }
 
-      charactersArray.forEach(function (character) {
+      // Iterar sobre cada personaje y llamar a la función createHero
+      data.forEach(function (character) {
         createHero(character);
       });
     } catch (error) {
-      console.error("Error en obtenir o guardar els personatges:", error);
+      console.error("Error al obtener o procesar los personajes:", error);
     }
   });
 
 function createHero(heroObject) {
-  // Verifica si el objecte de personatge es vàlid
+  // Verifica si el objeto de personaje es válido
   if (!heroObject || !heroObject.name || typeof heroObject.id === "undefined") {
     console.error("HeroObject no válido o sin definir:", heroObject);
     return;
   }
 
-  
-  const name = heroObject.name,
-    thumbnail = `${heroObject.thumbnail.path}/portrait_uncanny.${heroObject.thumbnail.extension}`,
-    templateHero = `
-            <div class="col-lg-3 col-md-4 col-sm-6 col-12 heroCard">
-                <h3 class="center-text">${name}</h3>
-                <img class="img-fluid" src="${thumbnail}" alt="${name}">
-            </div>
-        `;
+  const name = heroObject.name;
+  const thumbnail = `${heroObject.thumbnail.path}/portrait_uncanny.${heroObject.thumbnail.extension}`;
+  const templateHero = `
+    <div class="col-lg-3 col-md-4 col-sm-6 col-12 heroCard">
+      <h3 class="center-text">${name}</h3>
+      <img class="img-fluid" src="${thumbnail}" alt="${name}">
+    </div>
+  `;
 
   document.getElementById("hero").insertAdjacentHTML("beforeEnd", templateHero);
 
-  // Afegir el personatge al desplegable
+  // Agregar el personaje al desplegable
   const option = document.createElement("option");
   option.value = heroObject.id; 
   option.text = name; 
   document.getElementById("selectPersonaje").appendChild(option); 
-  
 }
 
 document.getElementById("eliminarPersonatge").addEventListener("click", async function () {
@@ -164,43 +161,47 @@ document.getElementById("eliminarPersonatge").addEventListener("click", async fu
   }
 });
 
-document.getElementById("aplicarFiltre").addEventListener("click", function () {
-  getCharacters()
-    .then((response) => {
+document.getElementById("aplicarFiltre").addEventListener("click", async function () {
+  try {
+    const response = await getCharacters();
+    
+    // Verificar si la respuesta es un arreglo de personajes
+    if (!Array.isArray(response)) {
+      console.error("La respuesta no es un arreglo:", response);
+      return;
+    }
 
-      const characters = response[0]; // Accedim al primer element de la resposta, que hauria de ser un array de personatges
+    const characters = response;
 
+    const filtroNom = document.getElementById("nomFiltre").value.toLowerCase();
+    const personatgesFiltrats = characters.filter(character => 
+      character.name && character.name.toLowerCase().includes(filtroNom)
+    );
 
-      const filtroNom = document.getElementById("nomFiltre").value.toLowerCase();
-      const personatgesFiltrats = characters.filter(character => 
-        character.name && character.name.toLowerCase().includes(filtroNom)
-      );
-
-      mostrarPersonatgesFiltrats(personatgesFiltrats);
-    })
-    .catch((error) => console.error("Error fetching characters:", error));
+    mostrarPersonatgesFiltrats(personatgesFiltrats);
+  } catch (error) {
+    console.error("Error fetching characters:", error);
+  }
 });
-
-
-function mostrarPersonatgesFiltrats(personatges) {
-  const container = document.getElementById("heroFiltratPerNom");
-  container.innerHTML = ""; // Netegem el contingut actual del contenidor
-
-  personatges.forEach((personatge) => {
-    const div = document.createElement("div");
-    div.className = "col-lg-3 col-md-4 col-sm-6 col-12 heroCard";
-    div.innerHTML = `
-          <h3 class="center-text">${personatge.name}</h3>
-          <img class="img-fluid" src="${personatge.thumbnail.path}.${personatge.thumbnail.extension}" alt="${personatge.name}">
-      `;
-    container.appendChild(div);
-  });
-}
-
 
 async function getCharacters() {
   const response = await fetch("http://localhost:3001/characters");
   const data = await response.json();
   console.log(data); 
   return data;
+}
+
+function mostrarPersonatgesFiltrats(personatges) {
+  const container = document.getElementById("heroFiltratPerNom");
+  container.innerHTML = ""; // Limpiamos el contenido actual del contenedor
+
+  personatges.forEach((personatge) => {
+    const div = document.createElement("div");
+    div.className = "col-lg-3 col-md-4 col-sm-6 col-12 heroCard";
+    div.innerHTML = `
+      <h3 class="center-text">${personatge.name}</h3>
+      <img class="img-fluid" src="${personatge.thumbnail.path}.${personatge.thumbnail.extension}" alt="${personatge.name}">
+    `;
+    container.appendChild(div);
+  });
 }

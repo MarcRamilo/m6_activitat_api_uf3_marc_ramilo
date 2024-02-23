@@ -11,8 +11,6 @@ server.use(jsonServer.bodyParser); // Mueve bodyParser antes de tus rutas person
 server.delete('/characters/:id', (req, res) => {
     const characterId = parseInt(req.params.id);
 
-    // Eliminar el personaje con el ID correspondiente de la base de datos
-    // Utiliza el método .remove() proporcionado por el router
     router.db.get('characters').remove({ id: characterId }).write();
 
     // Después de eliminar el personaje, asegúrate de guardar los cambios en la base de datos
