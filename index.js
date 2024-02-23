@@ -121,73 +121,88 @@ function createHero(heroObject) {
 
   // Agregar el personaje al desplegable
   const option = document.createElement("option");
-  option.value = heroObject.id; 
-  option.text = name; 
-  document.getElementById("selectPersonaje").appendChild(option); 
+  option.value = heroObject.id;
+  option.text = name;
+  document.getElementById("selectPersonaje").appendChild(option);
 }
 
-document.getElementById("eliminarPersonatge").addEventListener("click", async function () {
-  try {
-    const selectedId = document.getElementById("selectPersonaje").value; // Directament el ID seleccionat
-    console.log("Selected ID:", selectedId); // Verifica el ID seleccionat
+document
+  .getElementById("eliminarPersonatge")
+  .addEventListener("click", async function () {
+    try {
+      const selectedId = document.getElementById("selectPersonaje").value; // Directament el ID seleccionat
+      console.log("Selected ID:", selectedId); // Verifica el ID seleccionat
 
-    if (!selectedId) {
-      document.getElementById("missatge").innerHTML = "Seleccioneu un personatge abans d'eliminar.";
-      return;
-    }
-
-    
-    const deleteResponse = await fetch(`http://localhost:3001/characters/${selectedId}`, {
-      method: "DELETE"
-    });
-
-    if (deleteResponse.ok) {
-      // Si el servidor respon amb èxit
-      document.getElementById("missatge").innerHTML = `Personatge eliminat correctament.`;
-
-      // Eliminar el element del <select>
-      const optionToRemove = document.querySelector(`#selectPersonaje option[value='${selectedId}']`);
-      if (optionToRemove) {
-        optionToRemove.remove();
+      if (!selectedId) {
+        document.getElementById("missatge").innerHTML =
+          "Seleccioneu un personatge abans d'eliminar.";
+        return;
       }
-    } else {
-      // Si hi ha hagut un error al eliminar el personatge
-      throw new Error('Error al eliminar el personaje en el servidor');
+
+      const deleteResponse = await fetch(
+        `http://localhost:3001/characters/${selectedId}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (deleteResponse.ok) {
+        // Si el servidor respon amb èxit
+        document.getElementById(
+          "missatge"
+        ).innerHTML = `Personatge eliminat correctament.`;
+
+        // Eliminar el element del <select>
+        const optionToRemove = document.querySelector(
+          `#selectPersonaje option[value='${selectedId}']`
+        );
+        if (optionToRemove) {
+          optionToRemove.remove();
+        }
+      } else {
+        // Si hi ha hagut un error al eliminar el personatge
+        throw new Error("Error al eliminar el personaje en el servidor");
+      }
+    } catch (error) {
+      // Gestiona l'error si hi ha hagut un problema al fer l'operació
+      document.getElementById("missatge").innerHTML =
+        "Error en fer l'operació.";
+      console.error("Error en fer l'operació:", error);
     }
-  } catch (error) {
-    // Gestiona l'error si hi ha hagut un problema al fer l'operació
-    document.getElementById("missatge").innerHTML = "Error en fer l'operació.";
-    console.error("Error en fer l'operació:", error);
-  }
-});
+  });
 
-document.getElementById("aplicarFiltre").addEventListener("click", async function () {
-  try {
-    const response = await getCharacters();
-    
-    // Verificar si la respuesta es un arreglo de personajes
-    if (!Array.isArray(response)) {
-      console.error("La respuesta no es un arreglo:", response);
-      return;
+document
+  .getElementById("aplicarFiltre")
+  .addEventListener("click", async function () {
+    try {
+      const response = await getCharacters();
+
+      // Verificar si la respuesta es un arreglo de personajes
+      if (!Array.isArray(response)) {
+        console.error("La respuesta no es un arreglo:", response);
+        return;
+      }
+
+      const characters = response;
+
+      const filtroNom = document
+        .getElementById("nomFiltre")
+        .value.toLowerCase();
+      const personatgesFiltrats = characters.filter(
+        (character) =>
+          character.name && character.name.toLowerCase().includes(filtroNom)
+      );
+
+      mostrarPersonatgesFiltrats(personatgesFiltrats);
+    } catch (error) {
+      console.error("Error fetching characters:", error);
     }
-
-    const characters = response;
-
-    const filtroNom = document.getElementById("nomFiltre").value.toLowerCase();
-    const personatgesFiltrats = characters.filter(character => 
-      character.name && character.name.toLowerCase().includes(filtroNom)
-    );
-
-    mostrarPersonatgesFiltrats(personatgesFiltrats);
-  } catch (error) {
-    console.error("Error fetching characters:", error);
-  }
-});
+  });
 
 async function getCharacters() {
   const response = await fetch("http://localhost:3001/characters");
   const data = await response.json();
-  console.log(data); 
+  console.log(data);
   return data;
 }
 
@@ -204,4 +219,56 @@ function mostrarPersonatgesFiltrats(personatges) {
     `;
     container.appendChild(div);
   });
+
 }
+
+// Obtenir la llista de personatges del servidor
+function cargarPersonajesEnSelector() {
+  const select = document.getElementById("selectPersonatgeModificar");
+  select.innerHTML = ""; // Netejar el selector abans de poblar-lo
+  
+  // Obtenir la llista de personatges del servidor
+  getCharacters()
+      .then(response => {
+          response.forEach(character => {
+              const option = document.createElement("option");
+              option.value = character.id;
+              option.textContent = character.name;
+              select.appendChild(option);
+          });
+      })
+      .catch(error => console.error("Error obteniendo personajes:", error));
+}
+
+// Carregar la llista de personatges en el selector al carregar la pàgina
+document.addEventListener("DOMContentLoaded", cargarPersonajesEnSelector);
+
+// En el esdeveniment de clicar el botó de modificar personatge
+document.getElementById("modificarPersonatge").addEventListener("click", function () {
+  const nuevoNombre = document.getElementById("nouNom").value;
+  const personajeId = document.getElementById("selectPersonatgeModificar").value;
+
+  // Enviar una solicitud al servidor per actualizar el nom
+  fetch(`http://localhost:3001/characters/${personajeId}`, {
+      method: 'PATCH', // Método PATCH para actualizar el nom del personatge
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+          name: nuevoNombre
+      })
+  })
+  .then(response => {
+      if (response.ok) {
+          console.log("Nombre del personaje actualizado correctamente.");
+          // Recargar la llista de personajes en el selector
+          cargarPersonajesEnSelector();
+      } else {
+          throw new Error("Error al actualizar el nombre del personaje.");
+      }
+  })
+  .catch(error => console.error("Error modificando personaje:", error));
+
+  // Netegar el camp de text
+  document.getElementById("nouNom").value = "";
+});
