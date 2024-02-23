@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta API Marvel</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div id="missatge"></div>
+    <div class="jumbotron text-center">
+        <h1 class="display-4">¡Benvingut/da a la API de Marvel!</h1>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Marvel_Logo.svg/320px-Marvel_Logo.svg.png"
+            class="img-fluid" alt="Marvel Logo">
+        <p class="lead">A continuació tens diferentes accions CRUD que pots realitzar sobre la API de <a
+                href="https://developer.marvel.com/">MARVEL</a>. Llegeix les instruccions del <a href="README.MD">README.MD</a> per executar el entorn</p>
+        <hr class="my-4">
+        <div class="row justify-content-center">
+            <button id="guardarDades" class="btn btn-lg btn-primary mx-2 mb-2">Obtenir Dades de la API</button>
+            <button id="llistarPersonatges" class="btn btn-lg btn-primary mx-2">Llistar Personatges</button>
+        </div>
+        <h1 class="marvel text-center mt-4">Personatges de Marvel</h1>
+        <div class="container">
+            <div id="hero" class="row"></div>
+        </div>
+        <div class="row justify-content-center mt-4">
+            <select id="selectPersonaje" class="form-control mx-2">
+            </select>
+            <button id="eliminarPersonatge" class="btn btn-danger mx-2">Eliminar Personaje</button>
+        </div>
+        <br>
+        <button id="nouPersonatge" class="btn btn-success mx-2">Nou Personatge</button>
+        <div id="formulariNouPersonatge" style="display: none;">
+            <h2>Afegir nou personatge</h2>
+            <label for="nom">Nom:</label>
+            <input type="text" id="nom" name="nom" class="form-control mb-2">
+        
+            <button id="guardarNouPersonatge" class="btn btn-primary">Guardar</button>
+        </div>
+
+        <div id="filtrePerNom">
+            <h2>Filtrar per Nom</h2>
+            <label for="nomFiltre">Nom:</label>
+            <input type="text" id="nomFiltre" name="nomFiltre" class="form-control mb-2">
+            <button id="aplicarFiltre" class="btn btn-primary">Aplicar Filtre</button>
+        </div>
+        
+        <div id="heroFiltratPerNom" class="row"></div>
+    </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="index.js"></script>
+</body>
+
+</html>
